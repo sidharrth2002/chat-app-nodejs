@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const http = require('http').Server(app);
+const ejs = require('ejs');
 
-let server = app.listen(process.env.PORT, () => {
+let server = app.listen(3000, () => {
     console.log("server is running on port", server.address().port);
 });
 
@@ -14,9 +15,10 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 dotenv.config();
 
-app.use(express.static(__dirname));
+// app.use(express.static(__dirname));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.set('view engine', 'ejs');
 
 let Message = mongoose.model('Message', {name: String, message: String});
 
@@ -31,14 +33,22 @@ io.on('connection', (socket) => {
     })
 })
 
-// io.on('typing', () => {
-//     console.log('someone is typing');
-// })
+app.get('/', (req, res) => {
+    Message.find({}, (err, data) => {
+        if (err) {
+            res.render('index', {})
+        }
+        res.render('index', {name: 'Sidharrth', messages: data});
+    });
+})
 
 app.get('/messages', (req, res) => {
-    Message.find({}, (err, messages) => {
-        res.send(messages);
-    })
+    // Message.find({}, (err, messages) => {
+    //     // res.render('vie')
+    //     res.send(messages);
+    // })
+    const messages = Message.find({});
+    res.render('index', {name: 'Sidharrth', messages: messages});
 })
 
 app.post('/messages', (req, res) => {
@@ -47,8 +57,9 @@ app.post('/messages', (req, res) => {
         if(err) {
             sendStatus(500);
         } 
-        io.emit('message', req.body);
-        res.sendStatus(200);
+        io.emit('message');
+        console.log('here');
+        res.render('index', {name: 'saved bithc', messages: {name: 'naw bitch', message: 'rrr'}});
     })
 })
 

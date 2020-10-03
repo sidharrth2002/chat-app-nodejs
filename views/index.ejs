@@ -21,6 +21,7 @@
 
             <div class="jumbotron">
                 <h1 class="display-2">Welcome to SidsApp</h1>
+                <h2><%= name %></h2>
             </div>
             <div class="row">
               <div class="col-md-6 mb-5">
@@ -33,6 +34,10 @@
                 <button id="send" class="btn btn-success">Send</button>
               </div>
               <div class="col-md-6" id="messages">
+                <% for (let i = 0; i < messages.length; i++) { %>
+                    <h4><%= messages[i].name %></h4>
+                    <p><%= messages[i].message %></p>
+                    <% } %>
               </div>
             </div>
               
@@ -47,7 +52,7 @@
 
         sendButton.onclick = () => {
           sendMessage({name: namefield.value, message: messagefield.value});
-          getMessages();
+        //   getMessages();
         };
 
         let socket = io();
@@ -62,21 +67,21 @@
 
         socket.on('message', (body) => {
           console.log('received');
-          addMessages(body);
+          fetch('/');
         });
 
-        function addMessages(message) {
-            messages.innerHTML += (`<h4>${message.name}</h4><p>${message.message}</p>`);
-        }
+        // function addMessages(message) {
+        //     messages.innerHTML += (`<h4>${message.name}</h4><p>${message.message}</p>`);
+        // }
 
-        function getMessages() {
-            fetch('/messages')
-            .then(response => response.json())
-            .then(messagesFromServer => {
-              messages.innerHTML = '';
-              messagesFromServer.forEach(addMessages)
-            });
-        }
+        // function getMessages() {
+        //     fetch('/messages')
+        //     .then(response => response.json())
+        //     .then(messagesFromServer => {
+        //       messages.innerHTML = '';
+        //       messagesFromServer.forEach(addMessages)
+        //     });
+        // }
 
         function sendMessage(message) {
           console.log(message);
