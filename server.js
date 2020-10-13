@@ -22,6 +22,10 @@ app.set('view engine', 'ejs');
 
 let Message = mongoose.model('Message', {name: String, message: String});
 
+Message.deleteMany({}, (err) => {
+    console.log(err);
+});
+
 let dbUrl = `mongodb+srv://sidharrth2002:${process.env.DBPASSWORD}@chatapp.cts1i.mongodb.net/chatapp?retryWrites=true&w=majority`;
 
 io.on('connection', (socket) => {
@@ -42,14 +46,14 @@ app.get('/', (req, res) => {
     });
 })
 
-app.get('/messages', (req, res) => {
-    // Message.find({}, (err, messages) => {
-    //     // res.render('vie')
-    //     res.send(messages);
-    // })
-    const messages = Message.find({});
-    res.render('index', {name: 'Sidharrth', messages: messages});
-})
+// app.get('/messages', (req, res) => {
+//     // Message.find({}, (err, messages) => {
+//     //     // res.render('vie')
+//     //     res.send(messages);
+//     // })
+//     const messages = Message.find({});
+//     res.render('index', {name: 'Sidharrth', messages: messages});
+// })
 
 app.post('/messages', (req, res) => {
     let message = new Message(req.body);
@@ -58,8 +62,9 @@ app.post('/messages', (req, res) => {
             sendStatus(500);
         } 
         io.emit('message');
-        console.log('here');
-        res.render('index', {name: 'saved bithc', messages: {name: 'naw bitch', message: 'rrr'}});
+        Message.find({}, (err, messages) => {
+            res.render('index', {name: 'Sidharrth', messages: messages});
+        })
     })
 })
 

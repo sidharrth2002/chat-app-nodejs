@@ -8,11 +8,13 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <style>
       #messages {
         border: 1px solid burlywood;
+        height: 500px;
+        overflow: scroll;
       }
     </style>
   </head>
@@ -27,11 +29,13 @@
               <div class="col-md-6 mb-5">
                 <h1 class="display-4">Send Message</h1>
                 <br>
-                <input id="name" class="form-control" placeholder="Name">
+            <form action="/messages" method="POST">
+                <input name="name" id="name" class="form-control" placeholder="Name">
                 <br>
-                <textarea id="message" class="form-control" placeholder="Your Message Here"></textarea>
+                <textarea name="message" id="message" class="form-control" placeholder="Your Message Here"></textarea>
                 <br>
                 <button id="send" class="btn btn-success">Send</button>
+            </form>
               </div>
               <div class="col-md-6" id="messages">
                 <% for (let i = 0; i < messages.length; i++) { %>
@@ -50,15 +54,15 @@
         let messagefield = document.getElementById('message');
         let messages = document.getElementById('messages');
 
-        sendButton.onclick = () => {
-          sendMessage({name: namefield.value, message: messagefield.value});
-        //   getMessages();
-        };
+        // sendButton.onclick = () => {
+        //   sendMessage({name: namefield.value, message: messagefield.value});
+        // //   getMessages();
+        // };
 
         let socket = io();
 
         messagefield.onkeypress = () => {
-          socket.broadcast.emit('typing');
+          socket.emit('typing');
         }
 
         socket.on('typing', () => {
@@ -67,7 +71,7 @@
 
         socket.on('message', (body) => {
           console.log('received');
-          fetch('/');
+          location.reload();
         });
 
         // function addMessages(message) {
@@ -83,14 +87,14 @@
         //     });
         // }
 
-        function sendMessage(message) {
-          console.log(message);
-          fetch('/messages', 
-                {method: 'POST', headers: {
-                  'Content-Type': 'application/json' 
-                },
-                body: JSON.stringify(message)});
-        }
+        // function sendMessage(message) {
+        //   console.log(message);
+        //   fetch('/messages', 
+        //         {method: 'POST', headers: {
+        //           'Content-Type': 'application/json' 
+        //         },
+        //         body: JSON.stringify(message)});
+        // }
 
 </script>
     <!-- Optional JavaScript -->
